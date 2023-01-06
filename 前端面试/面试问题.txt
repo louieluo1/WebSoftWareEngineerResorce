@@ -1,0 +1,42 @@
+前言：HTML5、CSS3、ES6新特性，可以说是基础前端的面试的必考题了，以下是关于新特性的基本总结。
+
+HTML5：
+语义化的区块和段落元素：<section>,<article>,<nav>,<header>,<footer>,<aside>和<hgroup>
+音频和视频：<audio>和<video>元素嵌入和允许操作新的多媒体内容
+表单input的属性：color，date ，datetime-local ，email
+新的语义元素除了节段，媒体和表单元素之外，还有众多的新元素：<mark>，<figure>，<figcaption>，<data>，<time>，<output>，<progress>， 或者<meter>和<main>，这增加了有效的 HTML5 元素的数量。
+MathML：允许直接嵌入数学公式。
+Web Sockets：允许在页面和服务器之间建立持久连接并通过这种方法来交换非 HTML 数据。
+Server-sent events：允许服务器向客户端推送事件，而不是仅在响应客户端请求时服务器才能发送数据的传统范式。
+WebRTC：这项技术，其中的 RTC 代表的是即时通信，允许连接到其他人，直接在浏览器中控制视频会议，而不需要一个插件或是外部的应用程序
+Web Workers：能够把 JavaScript 计算委托给后台线程，通过允许这些活动以防止使交互型事件变得缓慢。
+XMLHttpRequest：允许异步读取页面的某些部分，允许其显示动态内容，根据时间和用户行为而有所不同。这是在Ajax背后的技术。
+History API：允许对浏览器历史记录进行操作。这对于那些交互地加载新信息的页面尤其有用。
+contentEditable 属性：把你的网站改变成 wiki
+拖放：HTML5 的拖放 API 能够支持在网站内部和网站之间拖放项目。同时也提供了一个更简单的供扩展和基于 Mozilla 的应用程序使用的 API。
+IndexedDB：是一个为了能够在浏览器中存储大量结构化数据，并且能够在这些数据上使用索引进行高性能检索的 Web 标准。
+SVG：一个基于 XML 的可以直接嵌入到 HTML 中的矢量图像格式。
+Canvas：画布API。
+Geolocation：地理API
+CSS3：
+阴影:使用box-shadow给逻辑框设置一个阴影，text-shadow文字加阴影
+圆角：使用border-image和它关联的普通属性，而且可以通过border-radius属性来支持圆角边框
+动画：为你的样式设置动画使用CSS Transitions以在不同的状态间设置动画，或者使用CSS Animations在页面的某些部分设置动画而不需要一个触发事件，你现在可以在页面中控制移动元素了
+flex布局：css多栏布局
+grid布局：网格布局
+线性渐变：使用gradient设置线性渐变
+媒体查询：根据显示设备的特性设置css
+图片边框：使用border-image设置图片边框
+ES6：
+let和const关键字：let关键字定义块作用域变量，const定义常量
+字符串模版：`${}`
+箭头函数：左边是参数集合，右边是函数体
+原生promise对象：将promise对象纳入规范
+symbol：增加symbol数据类型
+ES module: 引用ES module 模块化规范
+... : 拓展运算符，用来代替argument对象
+变量结构赋值
+async函数
+set和map函数
+for..of循环：用来遍历实现迭代器接口的数据
+class

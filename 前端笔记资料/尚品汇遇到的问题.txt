@@ -1,0 +1,86 @@
+*****无法使用vue create app解决方法：npm install -g @vue/cli。
+*****路由版本有问题：npm i vue-router@3
+*****less版本过高会报错，尽量选低版本：npm install --save less less-loader@5，
+
+*****项目开始的准备流程：
+1.建一个文件夹。
+2.在该文件夹下打开cmd，vue create app创建项目，选vue2。
+3.项目运行后让浏览器自动打开,package.json找vue-cli-service serve --open，在vue.config.js中写  // 解决自动打开浏览器出现的问题 devServer: {host: 'localhost',port: 8081,https: false,hot: false,proxy: null },
+4.在vue.config.js中关闭eslint:lintOnSave: false，
+5.src简写@代替，在jsconfig.json中写 "compilerOptions": {"baseUrl": "./","paths": {"@/*": ["src/*"]},},"exclude": ["node_modules","dist"],
+6.分析项目路由：什么组件是路由组件，什么组件是非路由组件，一般分为三个部分头中尾，头和尾会重复使用，其他组件会进行路由跳转，所以非路由组件：header和footer组件，路由组件：中间内容和中间进行的跳转的组件（首页路由，search查询和路由，登录路由，注册路由）。
+7.项目采用less样式，需要通过less,less-loader来把less样式变成css样式npm install --save less less-loader@5。
+8.(components)非路由组件步骤：1.创建或定义；2.引入；3.注册；4.使用，这些2，3，4都是在app.vue中写；
+9.清除默认样式：在index.html中<link rel="stylesheet" href="./reset.css">，reset.css自己写的
+10.(pages或views)路由组件的搭建：1.npm install --save vue-router@3,2.新建pages或views文件夹里面写路由组件，3.配置路由：配置路由信息一般放在router文件夹index.js中，index.js中导入vue和vue-router，使用vue-router插件，引入路由组件，配置路由：export default new VueRouter({routes: [{path: "/home",component: Home}]})，4.main.js中引入路由和注册路由(这时组件拥有$router,$route属性,$route:一般获取路由信息【路径，query，params等】，$router:一般进行编程式导航进行路由跳转【push|replace】)，5.在app.vue模板中写路由组件出口的router-view标签，6.重定向，项目跑起来就立刻定向到首页，在路由index.js中{path:"*",redirect:"/home"}, 7.在首页进行路由跳转，一般在页面直接展示的：使用声明式导航router-link标签，必须要有to属性<router-link to="/login">登录</router-link>，一般需要触发事件的用编程式导航：如@clicck点击事件methods: { goSearch(){this.$router.push('/search')} },
+11.非路由组件的显示与隐藏v-show好一点（方法1：在组件身上的$route获取当前路由信息，通过路由路径判断Footer显示与隐藏<Footer v-show="$route.path=='/home'||$route.path=='.search'"></Footer>）一般用方法2：配置路由的时候，可给路由添加路由元信息【meta】,路由需要配置对象，他的key不能瞎写。meta: { show: false }和<Footer v-show="$route.meta.show"></Footer>
+12.路由传参，在搜索这里传参(params参数：属于路径当中的一部分，在配置路由的时候需要占位，query参数：不属于路径当中的一部分,/home?k=v&kv=,不需要占位)：方法1：字符串形式，params传参(keyword)和query传参(k)，path: "/search/:keyword"和this.$router.push('/search/'+this.keyword+"?k="+this.keyword.toupperCase())和<h1>params参数：{{$route.params.keyword}}</h1>和<h1>query参数：{{$route.query.k}}</h1>。方法2：模板字符串,params传参(keyword)和query传参(k)：this.$router.push(`/search/${this.keyword}?k=${this.keyword.toUpperCase()}`)和<h1>params参数：{{$route.params.keyword}}</h1>和<h1>query参数：{{$route.query.k}}</h1>。方法3：对象,必须有name(因为path不能和params一起用，如果想params传参只能用name)，params传参(keyword)和query传参(k),name是路由的名字：this.$router.push({name:"search",params:{keyword:this.keyword},query:{k:this.keyword.toUpperCase()}})和{path: "/search/:keyword",component: Search, meta: { show: true },name: "search"}和<h1>params参数：{{$route.params.keyword}}</h1>和<h1>query参数：{{$route.query.k}}</h1>。（如果params已经占位了，但是没传parmas参数浏览器的地址框中路径url就有问题，会连跳的search都没有，只有query参数，所以params参数可传可不传解决方法：在路由配置哪里占位后面加问号？ {path: "/search/:keyword?",}。如果params传参传的是空串，url也会发生错误，解决方式可用undefined解决，params不能传递空串，参数可传递也可不传递：params:{keyword:''||undefined）。路由组件能不能传递props数据:方法1：布尔值写法：params（路由配置中）props: true,和props：['keyword'],和（路由组件中）<h1>params参数：{{$route.params.keyword}}---{{keyword}}</h1>。方法2：对象写法：额外的给路由组件传递一些props：props: { a: 1, b: 2 },和props:['a','b']和h1>query参数：{{$route.query.k}}-------{{b}}</h1>。方法3：函数写法：可以params参数，query参数，通过props传递路由组件：props: ($route) => ({ keyword: $route.params.keyword, k: $route.query.k }),或  props: ($route) => {return { keyword: $route.params.keyword, k:$route.query.k } }和<h1>params参数：{{$route.params.keyword}}---{{keyword}}</h1><h1>query参数：{{$route.query.k}}-------{{k}}</h1>和props:['keyword','k'],。（所有的传参有个问题：编程式路由调转当前的路由,当重复传相同的参数，就会出错,抛出navigationDuplicated警告错误（因为3.5.3最新vuerouter引入了promise），解决方式：1.改源码，治标不治本。2.使用原型对象来修改，不用修改源码，在路由配置文件中写，
+// 先把VueRouter原型对象的push,先保存一分
+let originPush = VueRouter.prototype.push;
+let originReplace = VueRouter.prototype.replace;
+// 重写push|replace
+// 第一个参数：告诉原来push方法，你往哪里跳转（传递那些参数）
+// 第二个参数：成功回调
+// 第三个参数：失败的回调
+VueRouter.prototype.push = function(location, resolve, reject) {
+    if (resolve && reject) {
+        // call||apply区别
+        // 相同点，都可以调用函数一次，都可以篡改函数的上下文一次
+        // 不同点，call与apply传递参数，call传递参数用逗号隔开，apply方法执行，传递参数
+        // call是调用原型的push方法
+        originPush.call(this, location, resolve, reject);
+    } else {
+        originPush.call(this, location, () => {}, () => {});
+    }
+}
+VueRouter.prototype.replace = function(location, resolve, reject) {
+    if (resolve && reject) {
+        // call||apply区别
+        // 相同点，都可以调用函数一次，都可以篡改函数的上下文一次
+        // 不同点，call与apply传递参数，call传递参数用逗号隔开，apply方法执行，传递参数
+        // call是调用原型的push方法
+        originReplace.call(this, location, resolve, reject);
+    } else {
+        originReplace.call(this, location, () => {}, () => {});
+    }
+}
+13.做全局组件：三级联动在很多组件中用到，所以做成全局组件，在home中写他会显示的组件，三级联动也在里面会显示，但是三级联动组件还是写到home中，在main.js中引入和注册全局组件，import TpyeNav from '@/pages/Home/TypeNav'和Vue.component(TpyeNav.name, TpyeNav);（ 第一个参数：全局组件名字，第二个参数：哪一个组件），然后在home组件中使用全局组件<TpyeNav/>(三级联动全局组件：三级联动已经注册为全局组件，因此不需要在引入),
+做非全局组件：只需要在使用的组件中引入和注册和使用（// 注册组件components:{ ListContainer,Recommend,Rank,Like,Floor,Brand, },）
+14.静态页面差不多弄完了，开始测试接口是否能用，用postman测试：http://gmall-h5-api.atguigu.cn/api/product/getBaseCategoryList返回200成功接口可用
+15.（npm|git看axios文档）开始对axios二次封装(因为请求拦截器，响应拦截器:请求拦截器可以在发请求前处理一些业务，响应拦截器是当服务器数据返回以后可以处理一些事情)，先安装axios,npm install --save axios，在项目中用axios是在api文件夹中，在request.js中进行axios的二次封装(接口当中路径带有/api，baseURL:"/api"),在api文件夹中index.js中API接口进行统一管理，引入request.js然后写接口：无参数的get请求：export const reqCategoryList = () => requests({ url: '/product/getBaseCategoryList', method: 'get' });然后再使用接口的地方引入api文件中的接口,然后使用他，他为函数，这个时候接口会报404错误，因为跨域问题，所以需要再vue.conofig.js中配置devServer解决跨域问题，devServer: {
+ // 解决自动打开浏览器出现的问题
+        host: 'localhost',
+        port: 8081,
+        https: false,
+        hot: false,
+ // 解决跨域问题
+        proxy: {
+            '/api': {
+                target: 'http://gmall-h5-api.atguigu.cn',
+                //因为接口本身就有api路径所以重写路径不需要写了
+                // pathRewrite:{'^/api':''},
+            }
+        }
+    },
+
+14.nprogress.进度条的使用:安装进度条包，npm install --save nprogress，然后再request.js中引入进度条：，然会在请求拦截器中写：进度条开始nProgress.start();和响应拦截器中写：进度条结束nProgress.done();然后引入进度条样式：import "nprogress/nprogress.css";如果想修改进度条颜色，可以直接再css中修改（进度条的前提就是有请求接口和响应接口才能看到进度条）。
+
+15.vuex状态管理库：安装vuex：npm install --save vuex，
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
